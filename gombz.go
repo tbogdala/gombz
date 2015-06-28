@@ -6,19 +6,74 @@ package gombz
 import (
 	"bytes"
 	"compress/zlib"
+	"io/ioutil"
+
 	mgl "github.com/go-gl/mathgl/mgl32"
 	"gopkg.in/mgo.v2/bson"
-	"io/ioutil"
 )
 
 const (
-	// The maximum number of UV channels supported.
+	// MaxUVChannelCount is the maximum number of UV channels supported.
 	MaxUVChannelCount = 8
 )
 
 // MeshFace is an alias for a vector of 3 unsigned ints.
 // Note: currently mathgl doesn't have support for integer vectors
 type MeshFace [3]uint32
+
+// AnimationQuatKey is a animation channel key that contains
+// a quaternion based animation
+type AnimationQuatKey struct {
+	// Time specifies the time in the animation for this current Quat value (e.g. rotation).
+	Time float32
+
+	// Key is the Quat value (e.g. rotation) at the given time in animation.
+	Key mgl.Quat
+}
+
+// AnimationVec3Key is a animation channel key that contains
+// a vector based animation
+type AnimationVec3Key struct {
+	// Time specifies the time in the animation for this current vector value (e.g. position).
+	Time float32
+
+	// Key is the vector value (e.g. position) at the given time in animation.
+	Key mgl.Vec3
+}
+
+// AnimationChannel is an object that contains data required to transform
+// a bone in an animation.
+type AnimationChannel struct {
+	// Name is the name of the animation channel
+	Name string
+
+	// PositionKeys is a slice of vector keys describing bone position at a given time in an animation.
+	PositionKeys []AnimationVec3Key
+
+	// ScaleKeys is a slice of vector keys describing bone scale at a given time in an animation.
+	ScaleKeys []AnimationVec3Key
+
+	// RotationKeys is a slice of Quat keys describing bone rotation at a given time in an animation.
+	RotationKeys []AnimationQuatKey
+}
+
+// Animation represents data required to transform bones in an animation.
+type Animation struct {
+	// Name is the name of the animation
+	Name string
+
+	// Duration is the length of the animation in ticks
+	Duration float32
+
+	// TicksPerSecond is the number of ticks per second for the animation as designed.
+	TicksPerSecond float32
+
+	// Transform is the transformation matrix.
+	Transform mgl.Mat4
+
+	// Channels is a slice of AnimationChannel objects that deform the bones
+	Channels []AnimationChannel
+}
 
 // Bone is a struct that contains transform and skeletal information
 // for skeletal animation.
@@ -68,6 +123,20 @@ type Mesh struct {
 
 	// Bones is slice of Bone objects that form the skeleton of the mesh
 	Bones []Bone
+
+	// VertexWeightIds is a slice that has a Vec4 for each vertex in Vertices
+	// which can contain up to four bone ids that will modify the vertex.
+	// Note: stored as a float since that's how it will be passed to shaders
+	VertexWeightIds []mgl.Vec4
+
+	// VertexWeights is a slice that has a Vec4 for each vertex in Vertices
+	// which can contain up to four bone weights used to determine how much
+	// the bone specified by VertexWeightIds affects the vertex position.
+	VertexWeights []mgl.Vec4
+
+	// Animations is a slice of Animation objects that represent all animations that
+	// can deform the mesh's Bones.
+	Animations []Animation
 }
 
 // Encode takes a given mesh and encodes it to binary with bson
