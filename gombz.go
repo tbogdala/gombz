@@ -47,6 +47,9 @@ type AnimationChannel struct {
 	// Name is the name of the animation channel
 	Name string
 
+	// BoneId is the corresponding bone.Id value for the channel
+	BoneId int32
+
 	// PositionKeys is a slice of vector keys describing bone position at a given time in an animation.
 	PositionKeys []AnimationVec3Key
 
