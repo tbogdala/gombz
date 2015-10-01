@@ -6,6 +6,7 @@ package gombz
 import (
 	"bytes"
 	"compress/zlib"
+	"fmt"
 	"io/ioutil"
 
 	mgl "github.com/go-gl/mathgl/mgl32"
@@ -193,4 +194,16 @@ func DecodeMesh(bs []byte) (outMesh *Mesh, err error) {
 	}
 
 	return outMesh, nil
+}
+
+// DecodeFile takes a file path, loads all of the bytes from it
+// and passes it to the DecodeMesh() function to return the Mesh
+// or error on failure.
+func DecodeFile(fn string) (outMesh *Mesh, err error) {
+	binBytes, err := ioutil.ReadFile(fn)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to load the binary file (%s).\n%v", fn, err)
+	}
+
+	return DecodeMesh(binBytes)
 }
