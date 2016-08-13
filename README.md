@@ -10,12 +10,6 @@ Additionally, it provides a compiler to take any file that [Assimp][assimp-link]
 supports and turns it into a compressed binary file that can be read by this library.
 
 
-UNDER CONSTRUCTION
-==================
-
-The library is currently in an alpha state, but you are welcome to see how
-it's progressing.
-
 Requirements
 ------------
 
@@ -30,12 +24,13 @@ Software requirements:
 The gombz compiler also needs:
 
 * [Assimp][assimp-link] version 3.1 - tested with this version
+* [Assimp-go][assimpgo-link] - Go wrappers for Assimp
 
 
 Compiler Installation (gombzc)
 ------------------------------
 
-The gombz compiler called `gombzc` can be installed to your $GOPATH/bin folder
+The gombz compiler called `gombzc` can be installed to your `$GOPATH/bin` folder
 by using the following command:
 
 ```bash
@@ -45,11 +40,11 @@ go install github.com/tbogdala/gombz/cmd/gombzc
 TODO
 ----
 
-The following need to be addressed in order to start releases:
-
-* documentation
-* samples
-* more data like animations
+* Documentation
+* Better command-line flags to better control ASSIMP
+* Consider supporting more than one mesh
+* Consider including bitangents? Send feedback or create an issue if you
+  feel strongly about this
 
 
 LICENSE
@@ -64,3 +59,4 @@ Gombz is released under the BSD license. See the [LICENSE][license-link] file fo
 [bson-link]: http://gopkg.in/mgo.v2/bson
 [zlib-link]: https://golang.org/pkg/compress/zlib/
 [assimp-link]: http://assimp.sourceforge.net/
+[assimpgo-link]: http://www.github.com/tbogdala/assimp-go
